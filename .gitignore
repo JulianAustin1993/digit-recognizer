@@ -4,6 +4,9 @@
 # data
 data/
 
+# tensorboard
+runs/
+
 # .env configuration
 .env
 
@@ -13,3 +16,6 @@ data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+#logs
+*.log
