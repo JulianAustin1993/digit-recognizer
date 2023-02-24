@@ -23,15 +23,15 @@ def create_validation_metrics(loader, net):
     y_true = []  # save ground truth
 
     # iterate over data
-    for inputs, labels in loader:
-        output = net(inputs)  # Feed Network
+    with torch.no_grad():
+        for inputs, labels in loader:
+            output = net(inputs)  # Feed Network
 
-        output = (torch.max(torch.exp(output), 1)[1]).data.cpu().numpy()
-        y_pred.extend(output)  # save prediction
+            output = (torch.max(torch.exp(output), 1)[1]).data.cpu().numpy()
+            y_pred.extend(output)  # save prediction
 
-        labels = labels.data.cpu().numpy()
-        y_true.extend(labels)  # save ground truth
-
+            labels = labels.data.cpu().numpy()
+            y_true.extend(labels)  # save ground truth
     # constant for classes
     classes = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
     # Build confusion matrix
@@ -139,6 +139,7 @@ def train_covnet(
                 accuracy = 0.0
                 running_loss = 0.0
         if val_dataloader:
+            net.eval()
             validation_metrics = create_validation_metrics(val_dataloader, net)
             writer.add_figure(
                 "Validation Confusion matrix",
@@ -150,6 +151,7 @@ def train_covnet(
                 validation_metrics.get("accuracy"),
                 epoch + 1,
             )
+            net.train()
     return {
         "model": net,
         "optimizer": optimizer,
