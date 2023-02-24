@@ -50,16 +50,28 @@ def create_validation_metrics(loader, net):
 class CustomMnistDataset(TensorDataset):
     """Dataset creator for MNIST kaggle dataset"""
 
-    def __init__(self, img_dir, train=True, transform=None):
-        self.train = train
+    def __init__(self, img_dir, type, transform=None):
+        if type == "train":
+            self.labels = True
+            filename = "train.csv"
+        elif type == "validation":
+            self.labels = True
+            filename = "validation.csv"
+        elif type == "test":
+            self.labels = False
+            filename = "test.csv"
+        else:
+            raise ValueError(
+                "Keyword arguement for type should be in {'train', 'validation', 'test'}"
+            )
         self.transform = transform
-        fp = Path(img_dir, "train.csv") if self.train else Path(img_dir, "test.csv")  # type: ignore
+        fp = Path(img_dir) / filename  # type: ignore
         ds = pd.read_csv(fp, dtype=np.float32)
         X_numpy = ds.loc[:, ds.columns != "label"].values  # type: ignore
         X_numpy_normalized = X_numpy / 255.0
         X = torch.from_numpy(X_numpy_normalized.reshape(-1, 1, 28, 28))
 
-        if self.train:
+        if self.labels:
             y_numpy = ds.label.values
             y_train = torch.from_numpy(y_numpy).type(torch.LongTensor)  # type: ignore
             super(CustomMnistDataset, self).__init__(X, y_train)

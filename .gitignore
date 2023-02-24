@@ -2,7 +2,7 @@
 .vscode/
 
 # data
-data/
+/data/
 
 # tensorboard
 runs/

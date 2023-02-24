@@ -13,5 +13,6 @@ PYTHON_INTERPRETER = python3
 
 data: 
 	kaggle competitions download -c digit-recognizer -p data
-	unzip data/digit-recognizer.zip -d data/
+	unzip data/digit-recognizer.zip -d data/raw/
 	rm data/digit-recognizer.zip
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw/ data/processed/
